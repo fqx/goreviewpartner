@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from gtp import gtp
-from Tkinter import *
+from tkinter import *
 from time import sleep
 from toolbox import *
 from toolbox import _

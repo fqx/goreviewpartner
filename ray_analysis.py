@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from gtp import gtp
 import sys
-from Tkinter import *
+from tkinter import *
 from toolbox import *
 from toolbox import _
 from time import time
@@ -135,7 +135,7 @@ class LiveAnalysis(RayAnalysis,LiveAnalysisBase):
 		LiveAnalysisBase.__init__(self,g,filename,profile)
 
 import subprocess
-import Queue
+import queue
 
 class Ray_gtp(gtp):
 
@@ -196,7 +196,7 @@ class Ray_gtp(gtp):
 				else:
 					log("leaving consume_stderr thread")
 					return
-			except Exception, e:
+			except Exception as e:
 				log("leaving consume_stderr thread due to exception:")
 				log(e)
 				return

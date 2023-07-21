@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from gtp import gtp
 import sys
-from Tkinter import *
+from tkinter import *
 from time import sleep
 import threading
 from toolbox import *
@@ -127,7 +127,7 @@ class LiveAnalysis(AQAnalysis,LiveAnalysisBase):
 
 import ntpath
 import subprocess
-import Queue
+import queue
 
 class AQ_gtp(gtp):
 

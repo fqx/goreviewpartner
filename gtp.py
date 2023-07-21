@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import subprocess,sys
-import threading, Queue
+import threading, queue
 from time import sleep
 from toolbox import log,GRPException
 
@@ -23,14 +23,14 @@ class gtp():
 	def consume_stderr(self):
 		while 1:
 			try:
-				err_line=self.process.stderr.readline().decode("utf-8")
+				err_line=self.process.stderr.readline()
 				if err_line:
 					log("#",err_line.strip())
 					self.stderr_queue.put(err_line)
 				else:
 					log("leaving consume_stderr thread")
 					return
-			except Exception,e:
+			except Exception as e:
 				log("leaving consume_stderr thread due to exception")
 				log(e)
 				return
@@ -38,13 +38,13 @@ class gtp():
 	def consume_stdout(self):
 		while 1:
 			try:
-				line=self.process.stdout.readline().decode("utf-8")
+				line=self.process.stdout.readline()
 				if line:
 					self.stdout_queue.put(line)
 				else:
 					log("leaving consume_stdout thread")
 					return
-			except Exception, e:
+			except Exception as e:
 				log("leaving consume_stdout thread due to exception")
 				log(e)
 				return
@@ -55,15 +55,15 @@ class gtp():
 	def write(self,txt):
 		try:
 			self.process.stdin.write(txt+"\n")
-		except Exception, e:
+		except Exception as e:
 			log("Error while writting to stdin\n"+unicode(e))
 		#self.process.stdin.write(str(self.c)+" "+txt+"\n")
 		self.c+=1
 
 	def readline(self):
-		answer=self.process.stdout.readline().decode("utf-8")
+		answer=self.process.stdout.readline()
 		while answer in ("\n","\r\n","\r"):
-			answer=self.process.stdout.readline().decode("utf-8")
+			answer=self.process.stdout.readline()
 		return answer
 	
 	####hight level function####
@@ -122,7 +122,7 @@ class gtp():
 			move=answer.split(" ")[1].upper()
 			self.history.append(["b",move])
 			return move
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in genmove_black()\nanswer='"+answer+"'\n"+unicode(e))
 
 		
@@ -133,7 +133,7 @@ class gtp():
 			move=answer.split(" ")[1].upper()
 			self.history.append(["w",move])
 			return move
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in genmove_white()\nanswer='"+answer+"'\n"+unicode(e))
 
 
@@ -155,7 +155,7 @@ class gtp():
 					if not self.place_white(move):
 						return False
 			return True			
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in undo()\n"+unicode(e))
 	
 	def place(self,move,color):
@@ -169,7 +169,7 @@ class gtp():
 		answer=self.readline().strip()
 		try:
 			return " ".join(answer.split(" ")[1:])
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in name()\nanswer='"+answer+"'\n"+unicode(e))
 	
 	def version(self):
@@ -177,7 +177,7 @@ class gtp():
 		answer=self.readline().strip()
 		try:
 			return answer.split(" ")[1]
-		except Exception,e:
+		except Exception as e:
 			raise GRPException("GRPException in version()\nanswer='"+answer+"'\n"+unicode(e))
 
 
@@ -193,7 +193,7 @@ class gtp():
 				return True
 			else:
 				return False	
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in set_free_handicap()\nanswer='"+answer+"'\n"+unicode(e))
 	
 	def undo_standard(self):
@@ -204,7 +204,7 @@ class gtp():
 				return True
 			else:
 				return False			
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in undo()\nanswer='"+answer+"'\n"+unicode(e))
 	
 	def countlib(self,move):
@@ -231,7 +231,7 @@ class gtp():
 		try:
 			if answer[0]=="=":return True
 			else:return False
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in set_time()\nanswer='"+answer+"'\n"+unicode(e))
 
 	def quit(self):

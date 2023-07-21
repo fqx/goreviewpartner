@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from Tkinter import *
+from tkinter import *
 from toolbox import *
 from toolbox import _
 from goban import *
 from copy import deepcopy as copy
 
 from time import sleep
-from Queue import Queue
+from queue import Queue
 
 class InteractiveGoban(Frame):
 	def __init__(self,parent,move,dim,sgf,**kwargs):
@@ -48,7 +48,7 @@ class InteractiveGoban(Frame):
 			
 			if (not self.white_autoplay) or (not self.black_autoplay):
 				self.actions_menubutton.menu.entryconfig(_('Do nothing'), state="disabled")
-		except Exception, e:
+		except Exception as e:
 			log(">>>",e)
 			pass
 		
@@ -83,7 +83,7 @@ class InteractiveGoban(Frame):
 			
 			if (not self.white_autoplay) or (not self.black_autoplay):
 				self.actions_menubutton.menu.entryconfig(_('Do nothing'), state='normal')
-		except Exception, e:
+		except Exception as e:
 			log(">>>",e)
 			pass
 		
@@ -606,7 +606,7 @@ class InteractiveGoban(Frame):
 				self.parent.after(delay,self.wait_for_display)
 				return
 
-		except Exception,e:
+		except Exception as e:
 			if str(e):
 				log(">>>>>",e)
 			delay=250

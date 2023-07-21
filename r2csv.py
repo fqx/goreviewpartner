@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from gomill import sgf_moves
+from sgfmill import sgf_moves
 from toolbox import *
 
 def rsgf2csv(filename):

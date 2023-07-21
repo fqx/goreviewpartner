@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from gtp import gtp
 import sys
-from Tkinter import *
+from tkinter import *
 from time import sleep
 import threading
 from toolbox import *
@@ -190,7 +190,7 @@ class LiveAnalysis(LeelaZeroAnalysis,LiveAnalysisBase):
 
 import ntpath
 import subprocess
-import Queue
+import queue
 
 class Position(dict):
 	def __init__(self):
@@ -317,7 +317,7 @@ class Leela_Zero_gtp(gtp):
 				else:
 					log("leaving consume_stderr thread")
 					return
-			except Exception, e:
+			except Exception as e:
 				log("leaving consume_stderr thread due to exception:")
 				log(e)
 				return

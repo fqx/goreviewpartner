@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from gtp import gtp
-from Tkinter import *
+from tkinter import *
 from toolbox import *
 from toolbox import _
 
@@ -32,7 +32,7 @@ def get_full_sequence(worker,current_color,deepness):
 		for u in range(undos):
 			worker.undo()
 		return [sequence.strip(),es]
-	except Exception, e:
+	except Exception as e:
 		return e
 
 

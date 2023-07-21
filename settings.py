@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from Tkinter import *
+from tkinter import *
 from gnugo_analysis import GnuGoSettings
 from ray_analysis import RaySettings
 from leela_analysis import LeelaSettings
@@ -186,7 +186,7 @@ class OpenSettings(Toplevel):
 	def save(self):
 		global lang, translations
 		log("Saving GRP settings")
-		for lang2, language in available_translations.iteritems():
+		for lang2, language in available_translations.items():
 			if language==self.Language.get():
 				if lang!=lang2:
 					grp_config.set("General","Language",lang2)

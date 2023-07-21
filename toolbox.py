@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from __future__ import print_function
 from traceback import format_exc
+
+unicode = str
 
 class GRPException(Exception):
 	def __init__(self,msg):
@@ -9,7 +12,7 @@ class GRPException(Exception):
 			self.str_msg=msg.encode("utf-8",errors='replace')
 		else:
 			self.str_msg=msg
-			self.utf_msg=msg.decode("utf-8",errors='replace')
+			self.utf_msg=msg
 		log("===")
 		log(format_exc())
 		log("===")
@@ -29,18 +32,18 @@ def log(*args):
 	for arg in args:
 		try:
 			if type(arg)==type(str('abc')):
-				arg=arg.decode('utf-8',errors='replace')
+				arg=arg
 			elif type(arg)!=type(u'abc'):
 				try:
 					arg=str(arg)
 				except:
 					arg=unicode(arg,errors='replace')
-				arg=arg.decode('utf-8',errors='replace')
-			arg=arg.encode(encoding, errors='replace')
-			print arg,
+				arg=arg
+			# arg=arg.encode(encoding, errors='replace')
+			print(arg, end=' ')
 		except:
-			print "?"*len(arg),
-	print
+			print("?"*len(arg), end=' ')
+	print()
 	loglock.release()
 
 def linelog(*args):
@@ -50,24 +53,24 @@ def linelog(*args):
 	for arg in args:
 		try:
 			if type(arg)==type(str('abc')):
-				arg=arg.decode('utf-8',errors='replace')
+				arg=arg
 			elif type(arg)!=type(u'abc'):
 				try:
 					arg=str(arg)
 				except:
 					arg=unicode(arg,errors='replace')
-				arg=arg.decode('utf-8',errors='replace')
-			arg=arg.encode(encoding, errors='replace')
-			print arg,
+				# arg=arg.decode('utf-8',errors='replace')
+			# arg=arg.encode(encoding, errors='replace')
+			print(arg, end=' ')
 		except:
-			print "?"*len(arg),
+			print("?"*len(arg), end=' ')
 	loglock.release()
 
-import tkMessageBox
+import tkinter.messagebox as tkMessageBox
 
 def show_error(txt,parent=None):
 	if type(txt)==type(str('abc')):
-		txt=txt.decode('utf-8',errors='replace')
+		txt=txt
 	try:
 		tkMessageBox.showerror(_("Error"),txt,parent=parent)
 		log("ERROR: "+txt)
@@ -76,7 +79,7 @@ def show_error(txt,parent=None):
 
 def show_info(txt,parent=None):
 	if type(txt)==type(str('abc')):
-		txt=txt.decode('utf-8',errors='replace')
+		txt=txt
 	try:
 		tkMessageBox.showinfo(_("Information"),txt,parent=parent)
 		log("INFO: "+txt)
@@ -145,15 +148,15 @@ def ij2sgf(m):
 	except:
 		raise GRPException("Cannot convert grid coordinates "+str(m)+" to SGF coordinates!")
 
-from gomill import sgf, sgf_moves
+from sgfmill import sgf, sgf_moves
 
-from Tkinter import *
+from tkinter import *
 #from Tix import Tk, NoteBook
-from Tkconstants import *
+from tkinter.constants import *
 
 import sys
 import os
-import urllib2
+import urllib
 
 
 class DownloadFromURL(Toplevel):
@@ -186,9 +189,9 @@ class DownloadFromURL(Toplevel):
 
 		log("Downloading",url)
 
-		r=urllib2.Request(url,headers=headers)
+		r=urllib.request(url,headers=headers)
 		try:
-			h=urllib2.urlopen(r)
+			h=urllib.request.urlopen(r)
 		except:
 			show_error(_("Could not open the URL"),parent=self)
 			return
@@ -263,12 +266,12 @@ def write_rsgf(filename,sgf_content):
 
 		new_file.close()
 		filelock.release()
-	except IOError, e:
+	except IOError as e:
 		filelock.release()
 		log("Could not save the RSGF file",filename)
 		log("=>", e.errno,e.strerror)
 		raise GRPException(_("Could not save the RSGF file: ")+filename+"\n"+e.strerror)
-	except Exception,e:
+	except Exception as e:
 		filelock.release()
 		log("Could not save the RSGF file",filename)
 		log("=>",e)
@@ -295,12 +298,12 @@ def write_sgf(filename,sgf_content):
 
 		new_file.close()
 		filelock.release()
-	except IOError, e:
+	except IOError as e:
 		filelock.release()
 		log("Could not save the SGF file",filename)
 		log("=>", e.errno,e.strerror)
 		raise GRPException(_("Could not save the RSGF file: ")+filename+"\n"+e.strerror)
-	except Exception,e:
+	except Exception as e:
 		filelock.release()
 		log("Could not save the RSGF file",filename)
 		log("=>",e)
@@ -320,14 +323,14 @@ def convert_sgf_to_utf(content):
 			log("Converting from",ca,"to UTF-8")
 			encoding=(codecs.lookup(ca).name.replace("_", "-").upper().replace("ISO8859", "ISO-8859")) #from gomill code
 			content=game.serialise()
-			content=content.decode(encoding,errors='ignore') #transforming content into a unicode object
+			content=content #transforming content into a unicode object
 			content=content.replace("CA["+ca+"]","CA[UTF-8]")
 			game = sgf.Sgf_game.from_string(content.encode("utf-8")) #sgf.Sgf_game.from_string requires str object, not unicode
 			return game
 	else:
 		log("the sgf has no declared encoding, we will enforce UTF-8 encoding")
 		content=game.serialise()
-		content=content.decode("utf",errors="replace").encode("utf")
+		content=content
 		game = sgf.Sgf_game.from_string(content,override_encoding="UTF-8")
 		return game
 
@@ -345,12 +348,12 @@ def open_sgf(filename):
 		filelock.release()
 		game = convert_sgf_to_utf(content)
 		return game
-	except IOError, e:
+	except IOError as e:
 		filelock.release()
 		log("Could not open the SGF file",filename)
 		log("=>", e.errno,e.strerror)
 		raise GRPException(_("Could not open the RSGF file: ")+filename+"\n"+e.strerror)
-	except Exception,e:
+	except Exception as e:
 		log("Could not open the SGF file",filename)
 		log("=>",e)
 		try:
@@ -412,8 +415,8 @@ def check_selection(selection,nb_moves):
 					b=a
 				if a<=b and a>0 and b<=nb_moves:
 					move_selection.extend(range(a,b+1))
-			except Exception, e:
-				print e
+			except Exception as e:
+				print(e)
 				return False
 	move_selection=list(set(move_selection))
 	move_selection=sorted(move_selection)
@@ -465,7 +468,7 @@ class RangeSelector(Toplevel):
 		if not bot_names:
 			Label(self,text=_("There is no bot configured in Settings")).grid(row=row,column=2,sticky=W)
 		else:
-		  botOptionMenu = apply(OptionMenu,(self, self.bot_selection)+tuple(bot_names))
+		  botOptionMenu = OptionMenu(*(self, self.bot_selection)+tuple(bot_names))
 		  botOptionMenu.config(width=20)
 		  botOptionMenu.grid(row=row,column=2,sticky=W)
 		  self.bot_selection.set(bot_names[0])
@@ -492,7 +495,7 @@ class RangeSelector(Toplevel):
 			v+=1
 		self.variation_selection.set(options[0])
 
-		variation_menu_widget=apply(OptionMenu,(self,self.variation_selection)+tuple(options))
+		variation_menu_widget=OptionMenu(*(self,self.variation_selection)+tuple(options))
 
 		existing_variations = StringVar()
 		existing_variations.set("remove_everything")
@@ -594,7 +597,7 @@ class RangeSelector(Toplevel):
 		try:
 			komi=self.g.get_komi()
 			komi_entry.insert(0, str(komi))
-		except Exception, e:
+		except Exception as e:
 			log("Error while reading komi value, please check:\n"+unicode(e))
 			show_error(_("Error while reading komi value, please check:")+"\n"+unicode(e),parent=self)
 			komi_entry.insert(0, "0")
@@ -706,10 +709,10 @@ class RangeSelector(Toplevel):
 
 
 
-import Queue
+import queue
 import time
 
-import ttk
+from tkinter import ttk
 
 
 def guess_color_to_play(move_zero,move_number):
@@ -953,7 +956,7 @@ class RunAnalysisBase(Toplevel):
 
 			log("Setting new komi")
 			node_set(self.g.get_root(),"KM",self.komi)
-		except Exception,e:
+		except Exception as e:
 			self.error=unicode(e)
 			self.abort()
 			return
@@ -961,7 +964,7 @@ class RunAnalysisBase(Toplevel):
 
 		try:
 			self.bot=self.initialize_bot()
-		except Exception,e:
+		except Exception as e:
 			self.error=_("Error while initializing the GTP bot:")+"\n"+unicode(e)
 			self.abort()
 			return
@@ -975,7 +978,7 @@ class RunAnalysisBase(Toplevel):
 		if parent!="no-gui":
 			try:
 				self.initialize_UI()
-			except Exception,e:
+			except Exception as e:
 				self.error=_("Error while initializing the graphical interface:")+"\n"+unicode(e)
 				self.abort()
 				return
@@ -1164,7 +1167,7 @@ class RunAnalysisBase(Toplevel):
 		try:
 			log("killing",self.bot.bot_name)
 			self.bot.close()
-		except Exception,e:
+		except Exception as e:
 			log(e)
 	def remove_app(self):
 		log("RunAnalysis beeing closed")
@@ -1218,7 +1221,7 @@ class RunAnalysisBase(Toplevel):
 
 		try:
 			write_rsgf(self.rsgf_filename,self.g)
-		except Exception,e:
+		except Exception as e:
 			self.lab1.config(text=_("Aborted"))
 			self.lab2.config(text="")
 			raise e
@@ -1246,7 +1249,7 @@ class BotOpenMove():
 				self.okbot=True
 			else:
 				self.okbot=False
-		except Exception, e:
+		except Exception as e:
 			log("Could not launch "+self.name)
 			log(e)
 			self.okbot=False
@@ -1299,14 +1302,14 @@ def bot_starting_procedure(bot_name,bot_gtp_name,bot_gtp,sgf_g,profile,silentfai
 			#bot_command_line=[grp_config.get(bot_name, command_entry)]+grp_config.get(bot_name, parameters_entry).split()
 			bot_command_line=[command_entry]+parameters_entry.split()
 			bot=bot_gtp(bot_command_line)
-		except Exception,e:
+		except Exception as e:
 			raise GRPException((_("Could not run %s using the command from config.ini file:")%bot_name)+"\n"+command_entry+" "+parameters_entry+"\n"+unicode(e))
 
 		log(bot_name+" started")
 		log(bot_name+" identification through GTP...")
 		try:
 			answer=bot.name()
-		except Exception, e:
+		except Exception as e:
 			raise GRPException((_("%s did not reply as expected to the GTP name command:")%bot_name)+"\n"+unicode(e))
 
 		if bot_gtp_name!='GtpBot':
@@ -1319,7 +1322,7 @@ def bot_starting_procedure(bot_name,bot_gtp_name,bot_gtp,sgf_g,profile,silentfai
 		log("Checking version through GTP...")
 		try:
 			bot_version=bot.version()
-		except Exception, e:
+		except Exception as e:
 			raise GRPException((_("%s did not reply as expected to the GTP version command:")%bot_name)+"\n"+unicode(e))
 
 		log("Version: "+bot_version)
@@ -1385,7 +1388,7 @@ def bot_starting_procedure(bot_name,bot_gtp_name,bot_gtp,sgf_g,profile,silentfai
 
 		bot.bot_name=bot_gtp_name
 		bot.bot_version=bot_version
-	except Exception,e:
+	except Exception as e:
 		if silentfail:
 			log(e)
 		else:
@@ -1538,7 +1541,7 @@ def parse_command_line(filename,argv):
 	if not found:
 		try:
 			komi=g.get_komi()
-		except Exception, e:
+		except Exception as e:
 			msg="Error while reading komi value, please check:\n"+unicode(e)
 			msg+="\nPlease indicate komi using --komi parameter"
 			log(msg)
@@ -1593,12 +1596,12 @@ log('GRP path:', os.path.abspath(pathname))
 config_file=os.path.join(os.path.abspath(pathname),"config.ini")
 log('Config file:', config_file)
 
-import ConfigParser
+import configparser as ConfigParser
 log("Checking availability of config file")
 conf = ConfigParser.ConfigParser()
 try:
 	conf.readfp(codecs.open(config_file,"r","utf-8"))
-except Exception, e:
+except Exception as e:
 	show_error("Could not open the config file of Go Review Partner"+"\n"+unicode(e)) #this cannot be translated
 	sys.exit()
 
@@ -1654,23 +1657,23 @@ class MyConfig():
 
 	def set(self, section, key, value):
 		if type(value) in (type(1), type(0.5), type(True)):
-			value=unicode(value)
+			value=str(value)
 		if type(section)!=type(u"abc"):
-			print section, "Warning: A non utf section string sent to my config:",section
+			print(section, "Warning: A non utf section string sent to my config:",section)
 		if type(key)!=type(u"abc"):
-			print key,"A non utf key string sent to my config:", key
+			print(key,"A non utf key string sent to my config:", key)
 		if type(value)!=type(u"abc"):
-			print value,"A non utf value string sent to my config:",value
-		section=unicode(section)
-		key=unicode(key)
-		value=unicode(value)
-		self.config.set(section.encode("utf-8"),key.encode("utf-8"),value.encode("utf-8"))
+			print(value,"A non utf value string sent to my config:",value)
+		# section=unicode(section)
+		# key=unicode(key)
+		# value=unicode(value)
+		self.config.set(section,key,value)
 		self.config.write(open(self.config_file,"w"))
 
 	def get(self,section,key):
 		try:
 			value=self.config.get(section,key)
-			value=value.decode("utf-8")
+			# value=value
 		except:
 			log("Could not read",str(section)+"/"+str(key),"from the config file")
 			log("Using default value")
@@ -1714,13 +1717,13 @@ class MyConfig():
 	def add_entry(self,section,key,value):
 		#normally section/key/value should all be unicode here
 		#but just to be sure:
-		section=unicode(section)
-		key=unicode(key)
-		value=unicode(value)
-		#then, let's turn every thing in str
-		section=section.encode("utf-8")
-		key=key.encode("utf-8")
-		value=value.encode("utf-8")
+		# section=unicode(section)
+		# key=unicode(key)
+		# value=unicode(value)
+		# #then, let's turn every thing in str
+		# section=section.encode("utf-8")
+		# key=key.encode("utf-8")
+		# value=value.encode("utf-8")
 		if not self.config.has_section(section):
 			log("Adding section",section,"in config file")
 			self.config.add_section(section)
@@ -1729,10 +1732,10 @@ class MyConfig():
 		self.config.write(open(self.config_file,"w"))
 
 	def get_sections(self):
-		return [section.decode("utf-8") for section in self.config.sections()]
+		return [section for section in self.config.sections()]
 
 	def get_options(self,section):
-		return [option.decode("utf-8") for option in self.config.options(section)]
+		return [option for option in self.config.options(section)]
 
 	def remove_section(self,section):
 		result=self.config.remove_section(section)
@@ -1760,7 +1763,7 @@ if not lang:
 			log("No translation available for lang="+lang)
 			log("Falling back on lang=en")
 			lang="en"
-	except Exception, e:
+	except Exception as e:
 		log("Could not determine the system language")
 		log(e)
 		log("Falling back to english")
@@ -1818,7 +1821,7 @@ def _(txt=None):
 	global translations
 	if not translations:
 		return unicode(txt)
-	if translations.has_key(txt):
+	if txt in translations:
 		return translations[txt]
 	return unicode(txt)
 
@@ -1851,7 +1854,7 @@ def batch_analysis(app,batch):
 			popup.end_of_analysis=popup.close
 			batch[0]=[popup]
 			app.after(1,lambda: batch_analysis(app,batch))
-	except Exception, e:
+	except Exception as e:
 		log("Batch analysis failed")
 		log(e)
 		app.force_close()
@@ -2008,8 +2011,8 @@ try:
 		return save_all_file(filename, parent, config=("General","livefolder"), filetype=(_("SGF file"),"(*.sgf;*.SGF)|*.sgf;*.SGF"))
 
 
-except Exception, e:
-	print "Could not import the WX GUI library, please double check it is installed:"
+except Exception as e:
+	print("Could not import the WX GUI library, please double check it is installed:")
 	log(e)
 	log("=> No problem, falling back to tkFileDialog")
 
@@ -2253,7 +2256,7 @@ def node_get(node, property_name):
 		property_name=property_name.encode("utf-8")
 	value=node.get(property_name)
 	if type(value)==type(str("abc")):
-		value=value.decode("utf-8")
+		value=value
 	return value
 
 def node_has(node, property_name):
@@ -2480,7 +2483,7 @@ def main(bot):
 			sys.exit()
 		try:
 			parameters=getopt.getopt(argv[1:], '', ['no-gui','range=', 'color=', 'komi=',"variation=", "profile="])
-		except Exception, e:
+		except Exception as e:
 			show_error(unicode(e)+"\n"+usage)
 			sys.exit()
 		if not parameters[1]:
@@ -2531,7 +2534,7 @@ try:
 		if mp3:
 			threading.Thread(target=playsound, args=(mp3,)).start()
 
-except Exception,e:
+except Exception as e:
 	log("Stone sound disabled:")
 	log(e)
 	play_stone_sound=lambda: None

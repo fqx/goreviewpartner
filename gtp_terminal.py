@@ -13,7 +13,7 @@ class Terminal(Toplevel):
 		self.protocol("WM_DELETE_WINDOW", self.close)
 		try:
 			self.bot=bot_gtp(bot_command_line)
-		except Exception, e:
+		except Exception as e:
 			self.close()
 			show_error(_("Could not run the program:")+"\n"+unicode(e),self.parent)
 			return

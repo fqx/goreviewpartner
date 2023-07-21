@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from __future__ import print_function
 
 from toolbox import *
 from toolbox import _
 from goban import *
 from datetime import datetime
-from Tkinter import *
+from tkinter import *
 from threading import Lock
 from copy import deepcopy as copy
-from ttk import Notebook
+from tkinter.ttk import Notebook
 from tabbed import *
 
 class LiveAnalysisLauncher(Toplevel):
@@ -38,7 +39,7 @@ class LiveAnalysisLauncher(Toplevel):
 		self.black_selection_wrapper=Frame(self)
 		self.black_selection_wrapper.grid(row=row,column=2,sticky=W)
 		self.black_options=[_("Human player"),_("Bot used for analysis")]+self.bots_names+self.gtp_bots_names
-		self.black_menu=apply(OptionMenu,(self.black_selection_wrapper,self.black_selection)+tuple(self.black_options))
+		self.black_menu=OptionMenu(*(self.black_selection_wrapper,self.black_selection)+tuple(self.black_options))
 		self.black_menu.pack()
 		#row+=1
 		#Label(self,text="").grid(row=row,column=1)
@@ -49,7 +50,7 @@ class LiveAnalysisLauncher(Toplevel):
 		self.white_selection_wrapper=Frame(self)
 		self.white_selection_wrapper.grid(row=row,column=2,sticky=W)
 		self.white_options=[_("Human player"),_("Bot used for analysis")]+self.bots_names+self.gtp_bots_names
-		self.white_menu=apply(OptionMenu,(self.white_selection_wrapper,self.white_selection)+tuple(self.white_options))
+		self.white_menu=OptionMenu(*(self.white_selection_wrapper,self.white_selection)+tuple(self.white_options))
 		self.white_menu.pack()
 		
 		row+=1
@@ -187,8 +188,8 @@ class LiveAnalysisLauncher(Toplevel):
 				
 				self.existing_position.delete(0, END)
 				self.existing_position.insert(0, str(nb_moves+1))
-			except Exception, e:
-				print e
+			except Exception as e:
+				print(e)
 				show_error(_("Could not read file")+" \""+os.path.basename(filename)+"\":\n"+unicode(e),parent=self)
 				
 	def change_filename(self,event=None):
@@ -252,7 +253,7 @@ class LiveAnalysisLauncher(Toplevel):
 				sgfgame=open_sgf(self.existing_game.get())
 				move_zero=sgfgame.get_root()
 				nb_moves=get_moves_number(move_zero)
-			except Exception, e:
+			except Exception as e:
 				show_error(unicode(e))
 				return
 				
@@ -260,7 +261,7 @@ class LiveAnalysisLauncher(Toplevel):
 				if (int(self.existing_position.get()) < 1) or (int(self.existing_position.get()) > nb_moves+1):
 					show_error(_("Move position out of range"))
 					return
-			except Exception, e:
+			except Exception as e:
 				show_error(_("Incorrect move position")+"\n"+unicode(e))
 				return
 				
@@ -289,14 +290,14 @@ class LiveAnalysisLauncher(Toplevel):
 		i=self.selected_black_index()
 		self.black_options=[_("Human player"),_("Bot used for analysis")+": "+self.bot_selection.get()]+self.bots_names+self.gtp_bots_names
 		self.black_menu.pack_forget()
-		self.black_menu=apply(OptionMenu,(self.black_selection_wrapper,self.black_selection)+tuple(self.black_options))
+		self.black_menu=OptionMenu(*(self.black_selection_wrapper,self.black_selection)+tuple(self.black_options))
 		self.black_menu.pack()
 		self.black_selection.set(self.black_options[i])
 
 		j=self.selected_white_index()
 		self.white_options=[_("Human player"),_("Bot used for analysis")+": "+self.bot_selection.get()]+self.bots_names+self.gtp_bots_names
 		self.white_menu.pack_forget()
-		self.white_menu=apply(OptionMenu,(self.white_selection_wrapper,self.white_selection)+tuple(self.white_options))
+		self.white_menu=OptionMenu(*(self.white_selection_wrapper,self.white_selection)+tuple(self.white_options))
 		self.white_menu.pack()
 		self.white_selection.set(self.white_options[j])
 		
@@ -322,19 +323,19 @@ class LiveAnalysisLauncher(Toplevel):
 	def update_overlap_thinking_option(self):
 		i=self.selected_black_index()
 		j=self.selected_white_index()
-		print i,j
+		print(i,j)
 		if i<=1 and j<=1:
 			nb_bots=1
-			print "a"
+			print("a")
 		elif (i>1 and j<=1) or (j>1 and i<=1):
 			nb_bots=2
-			print "b"
+			print("b")
 		elif (i>1 and j>1 and i==j):
 			nb_bots=2
-			print "c"
+			print("c")
 		elif (i>1 and j>1 and i!=j):
 			nb_bots=3
-			print "d"
+			print("d")
 		
 		for widget in self.overlap_thinking_widgets:
 			widget.grid_forget()
@@ -636,7 +637,7 @@ class LiveAnalysis(Toplevel):
 	def save_sgf(self):
 		try:
 			write_rsgf(self.rsgf_filename,self.g)
-		except Exception, e:
+		except Exception as e:
 			log("Could not save the RSGF file!")
 			log(e)
 			log("\a")
@@ -661,7 +662,7 @@ class LiveAnalysis(Toplevel):
 					new_node=sgf_game.extend_main_sequence()
 					node_set(new_node,"w",move)
 			write_rsgf(self.sgf_filename,sgf_game)
-		except Exception, e:
+		except Exception as e:
 			log("Could not save the SGF file!")
 			log(e)
 			log("\a")
@@ -1633,7 +1634,7 @@ class LiveAnalysisFromExistingGame(LiveAnalysis):
 	def save_sgf(self):
 		try:
 			write_rsgf(self.rsgf_filename,self.g)
-		except Exception, e:
+		except Exception as e:
 			log("Could not save the RSGF file!")
 			log(e)
 			log("\a")
@@ -1656,7 +1657,7 @@ class LiveAnalysisFromExistingGame(LiveAnalysis):
 					new_node=sgf_game.extend_main_sequence()
 					node_set(new_node,"w",move)
 			write_rsgf(self.sgf_filename,sgf_game)
-		except Exception, e:
+		except Exception as e:
 			log("Could not save the SGF file!")
 			log(e)
 			log("\a")

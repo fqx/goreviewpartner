@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from __future__ import print_function
 
 from gtp import gtp
 import sys
-from Tkinter import *
+from tkinter import *
 from time import sleep
 import threading
 from toolbox import *
@@ -174,7 +175,7 @@ class LiveAnalysis(PhoenixGoAnalysis,LiveAnalysisBase):
 
 import ntpath
 import subprocess
-import Queue
+import queue
 
 class Position(dict):
 	def __init__(self):
@@ -206,7 +207,7 @@ class PhoenixGo_gtp(gtp):
 			move=answer.split(" ")[1]
 			self.history.append(["b",move])
 			return move
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in genmove_black()\nanswer='"+answer+"'\n"+unicode(e))
 
 		
@@ -224,7 +225,7 @@ class PhoenixGo_gtp(gtp):
 			move=answer.split(" ")[1]
 			self.history.append(["w",move])
 			return move
-		except Exception, e:
+		except Exception as e:
 			raise GRPException("GRPException in genmove_white()\nanswer='"+answer+"'\n"+unicode(e))
 	
 	def quick_evaluation(self,color):
@@ -293,7 +294,7 @@ class PhoenixGo_gtp(gtp):
 				else:
 					log("leaving consume_stderr thread")
 					return
-			except Exception, e:
+			except Exception as e:
 				log("leaving consume_stderr thread due to exception:")
 				log(e)
 				return
@@ -305,7 +306,7 @@ class PhoenixGo_gtp(gtp):
 				else:
 					log("leaving consume_stderr thread")
 					return
-			except Exception, e:
+			except Exception as e:
 				log("leaving consume_stderr thread due to exception:")
 				log(e)
 				return
@@ -387,9 +388,9 @@ class PhoenixGo_gtp(gtp):
 						log("\t",move)
 						if move!=best_first_move:
 							top_branch=tree.branches[move]
-							print "111"
-							print top_branch.data
-							print "222"
+							print("111")
+							print(top_branch.data)
+							print("222")
 							winrate=top_branch.data.split(", Q=")[1].split(", ")[0]
 							winrate="%.2f%%"%((float(winrate)+1)*50.)
 							variation["value network win rate"]=winrate

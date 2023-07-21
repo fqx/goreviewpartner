@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from __future__ import print_function
 
 from functools import partial
 fuzzy=0.0
 from random import random,choice
-from Tkinter import *
-from Tkconstants import *
+from tkinter import *
+from tkinter.constants import *
 from math import sin, pi
 
 class Intersection():
@@ -455,18 +456,18 @@ class Goban(Canvas):
 				elif type(markup[i][j])==type(0.1): #heat map values
 					value=markup[i][j]
 					max_value=max([max([vv if type(vv)==type(0.1) else 0 for vv in ww]) for ww in markup])
-					print value, "/", max_value, "=>", 
+					print(value, "/", max_value, "=>", end=' ') 
 					value=value*1./max_value
-					print value
+					print(value)
 					r1, g1, b1=self.wood_color
 					r2, g2, b2=255, 0, 0
 					r3, g3, b3=int(r1+(r2-r1)*value), int(g1+(g2-g1)*value), int(b1+(b2-b1)*value)
-					print r1, g1, b1
-					print r2, g2, b2
-					print r3, g3, b3
-					print "value", markup[i][j], value	
+					print(r1, g1, b1)
+					print(r2, g2, b2)
+					print(r3, g3, b3)
+					print("value", markup[i][j], value)	
 					color='#%02x%02x%02x' % (r3, g3, b3)
-					print "value", markup[i][j], value, color
+					print("value", markup[i][j], value, color)
 					self.temporary_shapes.append(self.draw_point(i,j,0.8,color=bg,outline=bg))
 					self.temporary_shapes.append(self.draw_point(i,j,.7,color, outline=""))
 		
