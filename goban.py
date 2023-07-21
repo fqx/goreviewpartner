@@ -4,11 +4,11 @@ from __future__ import print_function
 
 from functools import partial
 fuzzy=0.0
-from random import random,choice
+from random import random,choice, randint
 from tkinter import *
 from tkinter.constants import *
 from math import sin, pi
-
+from py2to3 import *
 class Intersection():
 	def __init__(self,i,j,dim,space,anchor_x, anchor_y, offset, canvas):
 		self.i=i
@@ -216,7 +216,7 @@ class Goban(Canvas):
 			x2=0-.5+k1*dim
 			y2=dim-1+.5
 			
-			self.wood.append([y1,(x1+x2)/2+random()-0.5,y2,(x1+x2)/2+random()-0.5,'#%02x%02x%02x' % (r0, g0, b0),(k1-k0)*dim])
+			self.wood.append([y1, (x1+x2)/2+random()-0.5, y2, (x1+x2)/2+random()-0.5, '{:06x}'.format(int(r0) * 65536 + int(g0) * 256 + int(b0)), (k1-k0)*dim])
 			
 			k0=k1
 			k1+=0.005+random()*0.01
@@ -229,11 +229,11 @@ class Goban(Canvas):
 		
 		for i in range(dim):
 			for j in range(dim):
-				a,b,c=(25+choice(range(0,t)),8+choice(range(0,t/2)),8+choice(range(0,t/2)))
+				a, b, c = (25 + randint(0, t), 8 + randint(0, int(t/2)), 8 + randint(0, int(t/2)))
 				style=['#%02x%02x%02x' % (a,a,a),'#%02x%02x%02x' % (a+b,a+b,a+b),'#%02x%02x%02x' % (a+b+c,a+b+c,a+b+c)]
 				self.black_stones_style[i][j]=style
 				
-				a,b,c=(25+choice(range(0,t)),8+choice(range(0,t/2)),8+choice(range(0,t/2)))
+				a, b, c = (25 + randint(0, t), 8 + randint(0, int(t/2)), 8 + randint(0, int(t/2)))
 				style=['#%02x%02x%02x' % (255-a,255-a,255-a),'#%02x%02x%02x' % (255-a+b,255-a+b,255-a+b),'#%02x%02x%02x' % (255-a+b+c,255-a+b+c,255-a+b+c)]
 				self.white_stones_style[i][j]=style
 	
@@ -323,17 +323,20 @@ class Goban(Canvas):
 		space=self.space
 		x,y=self.ij2xy(i,j)
 		radius=diameter*space/2
+		color = fix_color(color)
 		oval=self.create_oval(x-radius,y-radius,x+radius,y+radius,fill=color,outline=outline,width=width)
 		return oval
 
 	def draw_line(self,i1,j1,i2,j2,color="black",width=1):
 		x1,y1=self.ij2xy(i1,j1)
 		x2,y2=self.ij2xy(i2,j2)
+		color = fix_color(color)
 		return self.create_line(x1,y1,x2,y2,fill=color,width=width)
 
 	def draw_rectangle(self,i1,j1,i2,j2,color="black",outline=""):
 		x1,y1=self.ij2xy(i1,j1)
 		x2,y2=self.ij2xy(i2,j2)
+		color = fix_color(color)
 		return self.create_rectangle(x1,y1,x2,y2,fill=color,outline=outline)
 
 	def reset(self):

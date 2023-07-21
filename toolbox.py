@@ -313,25 +313,16 @@ def convert_sgf_to_utf(content):
 	game = sgf.Sgf_game.from_string(content)
 	gameroot=game.get_root()
 	sgf_moves.indicate_first_player(game) #adding the PL property on the root
-	if node_has(gameroot,"CA"):
-		ca=node_get(gameroot,"CA")
-		if ca=="UTF-8":
+	ca = game.get_charset()
+	if ca == "UTF-8":
 			#the sgf is already in UTF, so we accept it directly
 			return game
-		else:
-			log("Encoding is",ca)
-			log("Converting from",ca,"to UTF-8")
-			encoding=(codecs.lookup(ca).name.replace("_", "-").upper().replace("ISO8859", "ISO-8859")) #from gomill code
-			content=game.serialise()
-			content=content #transforming content into a unicode object
-			content=content.replace("CA["+ca+"]","CA[UTF-8]")
-			game = sgf.Sgf_game.from_string(content.encode("utf-8")) #sgf.Sgf_game.from_string requires str object, not unicode
-			return game
+
 	else:
-		log("the sgf has no declared encoding, we will enforce UTF-8 encoding")
+		log("the sgf is not encoding in UTF-8, we will enforce UTF-8 encoding")
 		content=game.serialise()
-		content=content
-		game = sgf.Sgf_game.from_string(content,override_encoding="UTF-8")
+		content=content.decode("utf-8",errors="replace")
+		game = sgf.Sgf_game.from_string(content)
 		return game
 
 def open_sgf(filename):
@@ -2017,13 +2008,14 @@ except Exception as e:
 	log("=> No problem, falling back to tkFileDialog")
 
 	def open_all_file(parent,config,filetype):
-		import tkFileDialog
+		import tkinter.filedialog as tkFileDialog
 		initialdir = grp_config.get(config[0],config[1])
-		filename=tkFileDialog.askopenfilename(initialdir=initialdir, parent=parent,title=_("Select a file"),filetypes =filetype )
+		# filename=tkFileDialog.askopenfilename(initialdir=initialdir, parent=parent,title=_("Select a file"),filetypes =filetype )
+		filename = tkFileDialog.askopenfilename(initialdir=initialdir, parent=parent, title=_("Select a file"))
 		if filename:
 			initialdir=os.path.dirname(filename)
 			grp_config.set(config[0],config[1],initialdir)
-		filename=unicode(filename)
+		filename=str(filename)
 		return filename
 
 	def open_sgf_file(parent=None):
@@ -2252,17 +2244,31 @@ def node_set(node, property_name, value):
 
 
 def node_get(node, property_name):
-	if type(property_name)==type(u"abc"):
-		property_name=property_name.encode("utf-8")
-	value=node.get(property_name)
-	if type(value)==type(str("abc")):
-		value=value
-	return value
+
+	if type(property_name)== str:
+		value=node.get(property_name)
+		return value
+	# elif type(property_name) == list:
+	# 	for item in property_name:
+	# 		try:
+	# 			value = node.get(item)
+	# 			return value
+	# 		except:
+	# 			pass
+	# 	raise ValueError
+
 
 def node_has(node, property_name):
-	if type(property_name)==type(u"abc"):
-		property_name=property_name.encode("utf-8")
-	return node.has_property(property_name)
+
+	if type(property_name) == str:
+		return node.has_property(property_name)
+	# elif type(property_name) == list:
+	# 	for item in property_name:
+	# 		try:
+	# 			return node.has_property(item)
+	# 		except:
+	# 			pass
+	# 	raise ValueError
 
 def get_available():
 	from leela_analysis import Leela

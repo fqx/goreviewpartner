@@ -1500,9 +1500,9 @@ class DualView(Toplevel):
             else: c=2
             black_prob=None
             white_prob=None
-            if node_has(one_alternative,"BWWR") or node_has(one_alternative,"VNWR") or node_has(one_alternative,"MCWR"):
-                if node_has(one_alternative,"BWWR"):
-                    black_prob=float(node_get(one_alternative,"BWWR").split("%")[0])
+            if node_has(one_alternative,'BWWR') or node_has(one_alternative,"VNWR") or node_has(one_alternative,"MCWR"):
+                if node_has(one_alternative,'BWWR'):
+                    black_prob=float(node_get(one_alternative,'BWWR').split("%")[0])
                     white_prob=100-black_prob
                 elif node_has(one_alternative,"VNWR"):
                     black_prob=float(node_get(one_alternative,"VNWR").split("%")[0])
@@ -1524,8 +1524,8 @@ class DualView(Toplevel):
                             displaycolor="red"
                     elif coloring=="blue_for_better":
                         try:
-                            if node_has(parent[0][0],"BWWR"):
-                                real_game_prob=float(node_get(parent[0][0],"BWWR").split("%")[0])
+                            if node_has(parent[0][0],'BWWR'):
+                                real_game_prob=float(node_get(parent[0][0],'BWWR').split("%")[0])
                             elif node_has(parent[0][0],"VNWR"):
                                 real_game_prob=float(node_get(parent[0][0],"VNWR").split("%")[0])
                             elif node_has(parent[0][0],"MCWR"):
@@ -1551,8 +1551,8 @@ class DualView(Toplevel):
                             displaycolor="red"
                     elif coloring=="blue_for_better":
                         try:
-                            if node_has(parent[0][0],"BWWR"):
-                                real_game_prob=100-float(node_get(parent[0][0],"BWWR").split("%")[0])
+                            if node_has(parent[0][0],'BWWR'):
+                                real_game_prob=100-float(node_get(parent[0][0],'BWWR').split("%")[0])
                             elif node_has(parent[0][0],"VNWR"):
                                 real_game_prob=100-float(node_get(parent[0][0],"VNWR").split("%")[0])
                             elif node_has(parent[0][0],"MCWR"):
