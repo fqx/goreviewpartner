@@ -19,7 +19,7 @@ print(("File system encoding:",sys.getfilesystemencoding()))
 try:
     from tkinter import *
 except Exception:
-    print("Could not import the Tkinter librairy, please double check it is installed.")
+    print("Could not import the Tkinter library, please double check it is installed.")
     input()
     sys.exit()
 
